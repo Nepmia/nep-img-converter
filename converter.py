@@ -1,9 +1,10 @@
 import sys
+import argparse
 import os
 import logging as log
 from PIL import Image
 
-from helpers import verify_logs, create_log_folder, log_base_dir, basic_answers, basic_yes_default, user_prompt
+from helpers import verify_logs, create_log_folder, log_base_dir, basic_answers, basic_yes_default, user_prompt, parser
 
 if not verify_logs():
     create_log_folder()
@@ -20,7 +21,7 @@ log.basicConfig(
 )
 
 
-def convert_images(path_to_exec:str, source_extension:str, target_extension:str, always_overwrite:bool = False):
+def convert_images(path_to_exec:str, source_extension:str, target_extension:str, always_overwrite:bool):
     
     file_list = None
     
@@ -35,7 +36,7 @@ def convert_images(path_to_exec:str, source_extension:str, target_extension:str,
     if file_list:
         log.info("Folder listed, converting images.")
         for file in file_list:
-            if file.endswith(source_extention):
+            if file.endswith(source_extension):
 
                 raw_file_name = file.replace(f'.{source_extension}', '')
 
@@ -56,14 +57,18 @@ def convert_images(path_to_exec:str, source_extension:str, target_extension:str,
 
 
 if __name__ == "__main__":
-    path_to_exec = str(sys.argv[1])
-    source_extention = str(sys.argv[2])
-    target_extention = str(sys.argv[2])
-    always_overwrite = str(sys.argv[4])
+    # Define basic args
+    parser.add_argument("path_to_exec", help="Path to the folder that contains the image we want to convert")
+    parser.add_argument("source_extension", help="Extension of the file that needs to be converted (can be a list)")
+    parser.add_argument("target_extension", help="Extension of the newly created files (can be a list)")
+    parser.add_argument("-o","--overwrite", required=False, default=False, help="Option to always overwrite files", action="store_true")
+    
+    # Parse the args
+    args = parser.parse_args()
+
     log.info("Starting process.")
-    if always_overwrite == "overwrite":
-        log.info("User has chosen to always overwrite, skipping prompts.")
-    else:
-        always_overwrite = False
-    convert_images(path_to_exec, source_extention, target_extention, always_overwrite)
+    log.debug(f"got args: {args}")
+
+    # Launch the conversion
+    convert_images(args.path_to_exec, args.source_extension, args.target_extension, args.overwrite)
 

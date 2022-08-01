@@ -1,3 +1,4 @@
+import argparse
 import os
 import dotenv
 import logging as log
@@ -5,6 +6,10 @@ import logging as log
 dotenv.load_dotenv()
 
 log_base_dir = os.getenv("LOG_BASE_DIR")
+
+# Arg setup
+parser = argparse.ArgumentParser()
+
 
 # Prompt setup
 basic_answers =  {
