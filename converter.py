@@ -57,7 +57,11 @@ if __name__ == "__main__":
     path_to_exec = str(sys.argv[1])
     source_extention = str(sys.argv[2])
     target_extention = str(sys.argv[2])
-    always_overwrite = str(sys.argv[3])
+    always_overwrite = str(sys.argv[4])
     log.info("Starting process.")
+    if always_overwrite == "overwrite":
+        log.info("User has chosen to always overwrite, skipping prompts.")
+    else:
+        always_overwrite = False
     convert_images(path_to_exec, source_extention, target_extention, always_overwrite)
 
