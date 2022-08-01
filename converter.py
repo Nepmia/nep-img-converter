@@ -3,7 +3,7 @@ import os
 import logging as log
 from PIL import Image
 
-from helpers import verify_logs, create_log_folder, log_base_dir
+from helpers import verify_logs, create_log_folder, log_base_dir, basic_answers, basic_yes_default, user_prompt
 
 if not verify_logs():
     create_log_folder()
@@ -36,11 +36,21 @@ def convert_images(path_to_exec:str, source_extension:str, target_extension:str)
         log.info("Folder listed, converting images.")
         for file in file_list:
             if file.endswith(source_extention):
-                log.info(f"Converting {file} to {file}.{target_extension}")
-                image = Image.open(os.path.join(path_to_exec, file))
-                image.save(f"{path_to_exec}/{file.replace(f'.{source_extention}', f'.{target_extension}')}")
+
+                # Defaults to true and will change with prompt
+                answer = True
+
+                if file.endswith(target_extension):
+                    answer = user_prompt(basic_answers, "File already exist, overwrite?", basic_yes_default, "yes")
+
+                if answer:
+                    log.info(f"Converting {file} to {file}.{target_extension}")
+                    image = Image.open(os.path.join(path_to_exec, file))
+                    image.save(f"{path_to_exec}/{file.replace(f'.{source_extention}', f'.{target_extension}')}")
+                else:
+                    log.warning(f"User denied overwriting of file {file}.{target_extension}, skipping it.")
                 
-    log.info("Process finished without returning errors.")
+    log.info("Job finished.")
 
 
 if __name__ == "__main__":
