@@ -20,27 +20,33 @@ log.basicConfig(
 )
 
 
-def convert_images(path_to_exec:str, extension_to_convert:str):
+def convert_images(path_to_exec:str, source_extension:str, target_extension:str):
     
     file_list = None
     
+    log.info("Trying to list given directory.")
     try:
         file_list = os.listdir(path_to_exec)
     except FileNotFoundError:
-        FileNotFoundError("Unable to find given path, verify that it's correct")
+        log.critical("FileNotFoundError, verify the given path.")
         exit()
     
+
     if file_list:
+        log.info("Folder listed, converting images.")
         for file in file_list:
-            if file.endswith(extension_to_convert):
+            if file.endswith(source_extention):
+                log.info(f"Converting {file} to {file}.{target_extension}")
                 image = Image.open(os.path.join(path_to_exec, file))
-                image.save(f"{path_to_exec}/{file.replace(f'.{extension_to_convert}', '')}.webp")
+                image.save(f"{path_to_exec}/{file.replace(f'.{source_extention}', f'.{target_extension}')}")
                 
-    print("job suceeded")
+    log.info("Process finished without returning errors.")
 
 
 if __name__ == "__main__":
     path_to_exec = str(sys.argv[1])
-    extension_to_convert = str(sys.argv[2])
-    convert_images(path_to_exec, extension_to_convert)
+    source_extention = str(sys.argv[2])
+    target_extention = str(sys.argv[2])
+    log.info("Starting process.")
+    convert_images(path_to_exec, source_extention, target_extention)
 
