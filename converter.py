@@ -20,7 +20,7 @@ log.basicConfig(
 )
 
 
-def convert_images(path_to_exec:str, source_extension:str, target_extension:str):
+def convert_images(path_to_exec:str, source_extension:str, target_extension:str, always_overwrite:bool = False):
     
     file_list = None
     
@@ -40,7 +40,7 @@ def convert_images(path_to_exec:str, source_extension:str, target_extension:str)
                 # Defaults to true and will change with prompt
                 answer = True
 
-                if file.endswith(target_extension):
+                if file.endswith(target_extension) and not always_overwrite:
                     answer = user_prompt(basic_answers, "File already exist, overwrite?", basic_yes_default, "yes")
 
                 if answer:
@@ -57,6 +57,11 @@ if __name__ == "__main__":
     path_to_exec = str(sys.argv[1])
     source_extention = str(sys.argv[2])
     target_extention = str(sys.argv[2])
+    always_overwrite = str(sys.argv[3])
     log.info("Starting process.")
-    convert_images(path_to_exec, source_extention, target_extention)
+    if always_overwrite == "-overwrite":
+        log.info("User has chosen to always overwrite, skipping prompts.")
+    else:
+        always_overwrite = False
+    convert_images(path_to_exec, source_extention, target_extention, always_overwrite)
 
