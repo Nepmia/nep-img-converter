@@ -37,6 +37,8 @@ def convert_images(path_to_exec:str, source_extension:str, target_extension:str,
         for file in file_list:
             if file.endswith(source_extention):
 
+                raw_file_name = file.replace(f'.{source_extension}', '')
+
                 # Defaults to true and will change with prompt
                 answer = True
 
@@ -44,11 +46,11 @@ def convert_images(path_to_exec:str, source_extension:str, target_extension:str,
                     answer = user_prompt(basic_answers, "File already exist, overwrite?", basic_yes_default, "yes")
 
                 if answer:
-                    log.info(f"Converting {file} to {file}.{target_extension}")
+                    log.info(f"Converting {file} to {raw_file_name}.{target_extension}")
                     image = Image.open(os.path.join(path_to_exec, file))
-                    image.save(f"{path_to_exec}/{file.replace(f'.{source_extension}', f'.{target_extension}')}")
+                    image.save(f"{path_to_exec}/{raw_file_name}.{target_extension}")
                 else:
-                    log.warning(f"User denied overwriting of file {file}.{target_extension}, skipping it.")
+                    log.warning(f"User denied overwriting of file {raw_file_name}.{target_extension}, skipping it.")
                 
     log.info("Job finished.")
 
