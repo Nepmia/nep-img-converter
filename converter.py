@@ -29,7 +29,7 @@ def convert_images(path_to_exec:str, source_extension:str, target_extension:str,
         file_list = os.listdir(path_to_exec)
     except FileNotFoundError:
         log.critical("FileNotFoundError, verify the given path.")
-        exit()
+        sys.exit()
     
 
     if file_list:
@@ -46,7 +46,7 @@ def convert_images(path_to_exec:str, source_extension:str, target_extension:str,
                 if answer:
                     log.info(f"Converting {file} to {file}.{target_extension}")
                     image = Image.open(os.path.join(path_to_exec, file))
-                    image.save(f"{path_to_exec}/{file.replace(f'.{source_extention}', f'.{target_extension}')}")
+                    image.save(f"{path_to_exec}/{file.replace(f'.{source_extension}', f'.{target_extension}')}")
                 else:
                     log.warning(f"User denied overwriting of file {file}.{target_extension}, skipping it.")
                 
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     target_extention = str(sys.argv[2])
     always_overwrite = str(sys.argv[3])
     log.info("Starting process.")
-    if always_overwrite == "-overwrite":
+    if always_overwrite == "overwrite":
         log.info("User has chosen to always overwrite, skipping prompts.")
     else:
         always_overwrite = False
