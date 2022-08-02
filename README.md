@@ -9,18 +9,29 @@ You can also provide a list of ignores names so the script don't convert those i
 
 In order to use the script you must setup the `LOG_BASE_DIR`, which will be the folder where the script will output its logging 
 
-you can disable loging in a file by commenting / deleting the line 20 aka :
-`log.FileHandler(f"{log_base_dir}/converter.log")`
+you can disable loging in a file by commenting / deleting the `FileHandler` at line 20 :
+
+    log.FileHandler(f"{log_base_dir}/converter.log")
+
 (can also rename the output file there)
 
 ## Usage
 
-`converter.py [-h] [-s [SOURCE_EXTENSIONS ...]] [-t [TARGET_EXTENSIONS ...]] [-i [IGNORE_NAMES ...]] [-c CASE] [-o] path_to_exec`
+    converter.py [-h] [-s [SOURCE_EXTENSIONS ...]] [-t [TARGET_EXTENSIONS ...]] [-i [IGNORE_NAMES ...]] [-c CASE] [-o] path_to_exec
 
 You can view all possibilities and options using 
 `converter.py -h`
 
-But globally it's kinda easy to use.
+
+But globally it's kinda easy to use:
+
+    python converter.py "path/to/the/folder" -s "png" "jpg" -t "webp" -o -i "mycat" -c "camel"
+
+This will convert all `.png` and `.jpg` files in `path/to/the/folder` to `.webp` overwriting possibly existing `.webp` with the same name, it will export the new files in camelCase and ignore the image named "mycat" no matter its extension.
+
+We could have used unshortcuted options as such but it's longer:
+
+    python converter.py "path/to/the/folder" --source-extensions "png" "jpg" --target-extensions "webp" --overwrite --ignore-names "mycat" --case "camel"
 
 ## Logging
 
