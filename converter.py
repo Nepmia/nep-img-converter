@@ -27,11 +27,6 @@ def convert_images(path_to_exec:str, source_extension:str or list, target_extens
     # Define empty file list
     file_list = []
     
-    # Check and create lists for both extension types
-    log.info("Parsing source and target extensions.")
-    source_extension = list_checker(source_extension)
-    target_extension = list_checker(target_extension)
-    
     # Try to list the given path, return a filenotfound if it fails
     log.info("Trying to list given directory.")
     try:
@@ -86,6 +81,8 @@ if __name__ == "__main__":
 
     if args.overwrite:
         log.warn("Overwriting automatically.")
+
+    log.info(args.source_extensions)
     # Launch the conversion
     convert_images(args.path_to_exec, args.source_extensions, args.target_extensions, args.overwrite)
 

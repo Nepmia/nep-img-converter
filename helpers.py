@@ -22,6 +22,13 @@ basic_answers =  {
 basic_no_default = "[y/N]"
 basic_yes_default = "[Y/n]"
 
+allowed_cases = {
+    "snake": "decamelize",
+    "camel": "camelize",
+    "kebab": "kebabize",
+    "pascal": "pascalize",
+}
+
 def verify_logs() -> bool:  
     """Check if log folder exists
 
@@ -64,17 +71,3 @@ def user_prompt(valid_answers:dict, question:str, display_answer:str, default:st
             print("Incorect answer.", "Please retry. \n")
             print(question)
             print("Please answer with:", display_answer)
-
-def list_checker(source:str or list) -> list:
-    """Check if a source is a list or a str
-
-    Args:
-        source (str or list): The element to check
-
-    Returns:
-        list: Returns a list containing either all the items or just one
-    """
-    if type(source) is list:
-        return source
-    else:
-        return [source]
