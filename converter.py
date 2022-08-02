@@ -76,6 +76,7 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--source-extensions", nargs="*", help="List of extensions that needs to be converted (can be single)")
     parser.add_argument("-t", "--target-extensions", nargs="*", help="List of extensions for the newly created files (can be single)")
     parser.add_argument("-o","--overwrite", required=False, default=False, help="Option to always overwrite files", action="store_true")
+    parser.add_argument("-c", "--case", required=False, default="snake", help="Option to select export casing, default is snake case. Supports: camel, snake, kebab, pascal")
     
     # Parse the args
     args = parser.parse_args()
