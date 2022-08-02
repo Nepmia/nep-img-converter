@@ -85,7 +85,7 @@ def convert_images(path_to_exec:str, source_extension:list, target_extension:lis
                             image = Image.open(os.path.join(path_to_exec, file))
 
                             # Special case of jpeg...
-                            if new_extension == "jpg" or "jpeg":
+                            if "jpg" in new_extension or "jpeg" in new_extension:
                                 log.warning("User is converting in jpeg, converting RGBA to RGB.")
                                 image = image.convert("RGB")
 
