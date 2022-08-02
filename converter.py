@@ -4,8 +4,9 @@ import argparse
 import os
 import logging as log
 from PIL import Image
+import humps
 
-from helpers import list_checker, verify_logs, create_log_folder, log_base_dir, basic_answers, basic_yes_default, user_prompt, parser
+from helpers import verify_logs, create_log_folder, log_base_dir, basic_answers, basic_yes_default, user_prompt, parser, allowed_cases
 
 if not verify_logs():
     create_log_folder()
@@ -22,11 +23,18 @@ log.basicConfig(
 )
 
 
-def convert_images(path_to_exec:str, source_extension:str or list, target_extension:str or list, overwrite:bool):
+def convert_images(path_to_exec:str, source_extension:str or list, target_extension:str or list, case:str, overwrite:bool):
     
     # Define empty file list
     file_list = []
     
+    # Check if the case arg is correct
+    if allowed_cases.get(case):
+        log.info(f"Exported files will be in {case} case")
+    else:
+        log.critical("Invalid case name, killing.")
+        sys.exit()
+
     # Try to list the given path, return a filenotfound if it fails
     log.info("Trying to list given directory.")
     try:
@@ -40,6 +48,11 @@ def convert_images(path_to_exec:str, source_extension:str or list, target_extens
         log.info(f"Converting {file}")
         for extension in source_extension:
             raw_file_name = file.replace(f'.{extension}', '')
+            
+            # Create the correct name for the exported file
+            parsed_file_name = eval(f"humps.{allowed_cases[case]}('{raw_file_name}')")
+            
+
             if file.endswith(extension):
                 
                 for new_extension in target_extension:
@@ -47,27 +60,36 @@ def convert_images(path_to_exec:str, source_extension:str or list, target_extens
                     # Defaults to true and will change with prompt
                     answer = True
                 
-                    if f"{raw_file_name}.{new_extension}" in file_list and not overwrite:
-                        answer = user_prompt(basic_answers, f"File {raw_file_name}.{new_extension} already exist, overwrite?", basic_yes_default, "yes")
+                    # If the file already exist and if no overwrite rule has
+                    # Been set, ask the user if they want to overwrite
+                    if f"{parsed_file_name}.{new_extension}" in file_list and not overwrite:
+                        answer = user_prompt(
+                            basic_answers, 
+                            f"File {parsed_file_name}.{new_extension} already exist, overwrite?", 
+                            basic_yes_default,
+                            "yes"
+                        )
 
                     if answer:
-                        log.info(f"Converting {file} to {raw_file_name}.{new_extension}")
+
+                        log.info(f"Converting {file} to {parsed_file_name}.{new_extension}")
                         image = Image.open(os.path.join(path_to_exec, file))
 
+                        # Special case of jpeg...
                         if new_extension == "jpg" or "jpeg":
                             log.warning("User is converting in jpeg, converting RGBA to RGB.")
                             image = image.convert("RGB")
 
-                        image.save(f"{path_to_exec}/{raw_file_name}.{new_extension}")
+                        image.save(f"{path_to_exec}/{parsed_file_name}.{new_extension}")
                     else:
-                        log.warning(f"User denied overwriting of file {raw_file_name}.{new_extension}, skipping it.")
+                        log.warning(f"User denied overwriting of file {parsed_file_name}.{new_extension}, skipping it.")
 
                 
     log.info("Job finished.")
 
 if __name__ == "__main__":
     # Define basic args
-    parser.add_argument("path_to_exec", help="Path to the folder that contains the image we want to convert")
+    parser.add_argument("path_to_exec", help="Path to the folder that contains all the images we want to convert")
     parser.add_argument("-s", "--source-extensions", nargs="*", help="List of extensions that needs to be converted (can be single)")
     parser.add_argument("-t", "--target-extensions", nargs="*", help="List of extensions for the newly created files (can be single)")
     parser.add_argument("-o","--overwrite", required=False, default=False, help="Option to always overwrite files", action="store_true")
@@ -82,7 +104,7 @@ if __name__ == "__main__":
     if args.overwrite:
         log.warn("Overwriting automatically.")
 
-    log.info(args.source_extensions)
+    log.info(args)
     # Launch the conversion
-    convert_images(args.path_to_exec, args.source_extensions, args.target_extensions, args.overwrite)
+    convert_images(args.path_to_exec, args.source_extensions, args.target_extensions, args.case, args.overwrite)
 
