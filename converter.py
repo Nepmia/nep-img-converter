@@ -46,9 +46,6 @@ def convert_images(path_to_exec:str, source_extension:list, target_extension:lis
     log.info("Folder listed, converting images.")
     for file in file_list:
 
-
-
-        log.info(f"Converting {file}")
         for extension in source_extension:
 
             raw_file_name = file.replace(f'.{extension}', '')
